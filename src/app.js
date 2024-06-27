@@ -257,7 +257,7 @@ const clock = new THREE.Clock();
 //  * Helpers
 //  * - Grid and Axes
 //  **/
-scene.add(new THREE.AxesHelper(5) /*, new THREE.GridHelper(5) */);
+// scene.add(new THREE.AxesHelper(5) , new THREE.GridHelper(5) );
 
 /**
  * Tick
