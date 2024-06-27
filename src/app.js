@@ -3,6 +3,13 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import fragmentShader from "./shaders/fragment.glsl";
 import vertexShader from "./shaders/vertex.glsl";
+import GUI from "lil-gui";
+
+/**
+ * GUI
+ **/
+const gui = new GUI();
+
 /**
  * Canvas
  **/
@@ -17,7 +24,7 @@ const scene = new THREE.Scene();
  * Loaders
  **/
 
-const textureLoader = new THREE.TextureLoader();
+// const textureLoader = new THREE.TextureLoader();
 const gltfLoader = new GLTFLoader();
 /**
  * Sizes
@@ -60,7 +67,7 @@ const camera = new THREE.PerspectiveCamera(
   100
 );
 
-camera.position.set(2, 2, 5);
+camera.position.set(1, 2, 2);
 scene.add(camera);
 
 /**
@@ -85,18 +92,38 @@ renderer.setPixelRatio(sizes.pixelRatio);
  * Mobile Model
  **/
 
+// COLOR
+const materialsParams = {};
+materialsParams.color = "#8105fe";
+
 // Material
 const material = new THREE.ShaderMaterial({
   vertexShader,
   fragmentShader,
+  transparent: true,
+  //   side: THREE.DoubleSide,
+  depthWrite: false,
+  blending: THREE.AdditiveBlending,
+
+  uniforms: {
+    uTime: new THREE.Uniform(0),
+    uColor: new THREE.Uniform(new THREE.Color(materialsParams.color)),
+  },
 });
+
+gui
+  .addColor(materialsParams, "color")
+  .name("Material Color")
+  .onChange((color) => {
+    return material.uniforms.uColor.value.set(color);
+  });
 
 let phone = null;
 gltfLoader.load("/phone/phone.glb", (gltf) => {
   gltf.scene.scale.set(0.3, 0.3, 0.3);
 
   phone = gltf.scene;
-  phone.rotation.y = Math.PI;
+  //   phone.rotation.y = Math.PI;
   //   phone.position.set(0.5, -0.47, 1);
 
   phone.traverse((child) => {
@@ -139,9 +166,11 @@ const tick = () => {
   controls.update();
   const elapsedTime = clock.getElapsedTime();
 
+  material.uniforms.uTime.value = elapsedTime;
+
   // Rotate objects
   if (phone !== null) {
-    phone.rotation.z = -elapsedTime * 0.1;
+    // phone.rotation.z = -elapsedTime * 0.1;
     phone.rotation.y = elapsedTime * 0.2;
   }
 
