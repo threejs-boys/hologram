@@ -2,6 +2,7 @@ uniform float uTime;
 varying vec3 vPosition;
 varying vec2 vUv;
 varying vec3 vNormal;
+varying float vGlitchTime;
 
 float random2D (vec2 st) {
     return fract(sin(dot(st.xy,
@@ -15,8 +16,8 @@ void main()
     vec4 modelPosition = modelMatrix * vec4(position, 1.0);
     
     // Glitch
-    float glitchTIme =  uTime -  modelPosition.y;
-    float glitchStrength =  sin(glitchTIme) +sin(glitchTIme * 3.45)+sin(glitchTIme* 8.76) ;
+    float glitchTime =  uTime -  modelPosition.y;
+    float glitchStrength =  sin(glitchTime) +sin(glitchTime * 3.45)+sin(glitchTime* 8.76) ;
     glitchStrength =  smoothstep(0.3, 1.0, glitchStrength);
     glitchStrength *=0.05;
    modelPosition.x += ( random2D(modelPosition.xz + uTime ) - 0.5) * glitchStrength;
@@ -34,6 +35,7 @@ void main()
     // Varyings
     vPosition = modelPosition.xyz;
     vNormal = modelNormal.xyz;
+    vGlitchTime=glitchTime;
     vUv =  uv; 
 
    
